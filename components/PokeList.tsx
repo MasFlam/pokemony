@@ -31,6 +31,7 @@ export default function PokeList({
               dispatch(updateFavPokeName(name));
             }
           }}
+          showLike={showLikes}
           liked={favPokeName === name}
         />
       )}

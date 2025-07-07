@@ -8,6 +8,7 @@ import * as Solid from "react-native-heroicons/solid";
 export type PokeListItemProps = {
   pokemonName: string;
   liked?: boolean;
+  showLike?: boolean;
   onOpen?: () => void;
   onLikeToggle?: () => void;
 };
@@ -15,6 +16,7 @@ export type PokeListItemProps = {
 export function PokeListItem({
   pokemonName,
   liked = false,
+  showLike = true,
   onOpen = () => {},
   onLikeToggle: onLike = () => {},
 }: PokeListItemProps) {
@@ -35,19 +37,21 @@ export function PokeListItem({
             <Text className="text-gray-500">{`#${pokemon.data?.id || "..."}`}</Text>
           </View>
         </View>
-        <View className="mr-4">
-          <PlatformPressable
-            android_ripple={{ foreground: true }}
-            className="overflow-hidden p-2 rounded-full"
-            onPress={() => onLike()}
-          >
-            {liked ? (
-              <Solid.HeartIcon size={30} />
-            ) : (
-              <Outline.HeartIcon size={30} />
-            )}
-          </PlatformPressable>
-        </View>
+        {showLike && (
+          <View className="mr-4">
+            <PlatformPressable
+              android_ripple={{ foreground: true }}
+              className="overflow-hidden p-2 rounded-full"
+              onPress={() => onLike()}
+            >
+              {liked ? (
+                <Solid.HeartIcon size={30} />
+              ) : (
+                <Outline.HeartIcon size={30} />
+              )}
+            </PlatformPressable>
+          </View>
+        )}
       </View>
     </Pressable>
   );
