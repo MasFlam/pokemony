@@ -17,16 +17,15 @@ import {
 } from "@gorhom/bottom-sheet";
 import * as Crypto from "expo-crypto";
 import { AppleMaps, Coordinates, GoogleMaps } from "expo-maps";
-import Fuse from "fuse.js";
-import { useCallback, useMemo, useRef, useState } from "react";
-import { Platform, Text, TextInput, View } from "react-native";
-import colors from "tailwindcss/colors";
+import { AppleMapsMarker } from "expo-maps/build/apple/AppleMaps.types";
+import { GoogleMapsMarker } from "expo-maps/build/google/GoogleMaps.types";
+import { useMemo, useRef, useState } from "react";
+import { Platform, Text, View } from "react-native";
 
 export default function MapLayout() {
   const pokeNames = useGetPokemonNamesQuery();
   const allPins = useAppSelector(selectAllPokePins);
   const dispatch = useAppDispatch();
-  const [searchResults, setSearchResults] = useState<string[] | undefined>();
   const [chosenCoords, setChosenCoords] = useState<
     { latitude: number; longitude: number } | undefined
   >();
@@ -38,19 +37,8 @@ export default function MapLayout() {
     selectPinById(state, chosenPinId)
   );
 
-  const fuse = useMemo(() => {
-    if (pokeNames.data === undefined) {
-      return undefined;
-    } else {
-      return new Fuse(pokeNames.data, {
-        threshold: 0.3,
-      });
-    }
-  }, [pokeNames]);
-
   const openAddMenu = ({ latitude, longitude }: Coordinates) => {
     setChosenCoords({ latitude: latitude!, longitude: longitude! });
-    setSearchResults(undefined);
     listSheetRef.current?.present();
   };
 
@@ -67,32 +55,29 @@ export default function MapLayout() {
     listSheetRef.current?.dismiss();
   };
 
+  const markerChosen = (marker: GoogleMapsMarker | AppleMapsMarker) => {
+    setChosenPinId(marker.id);
+    detailsSheetRef.current?.present();
+  };
+
   const chosenPinRemove = () => {
     dispatch(removePokePin(chosenPinId!));
     setChosenPinId(undefined);
     detailsSheetRef.current?.dismiss();
   };
 
-  const onSearchChange = (text: string) => {
-    if (fuse === undefined || text.length < 3) {
-      setSearchResults(undefined);
-    } else {
-      setSearchResults(fuse.search(text).map((result) => result.item));
-    }
-  };
+  const renderBackdrop = (props: any) => (
+    <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
+  );
 
-  const pokeNamesToShow =
-    searchResults !== undefined ? searchResults : pokeNames.data || [];
-
-  const renderBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={1}
-      />
-    ),
-    []
+  const mapMarkers = useMemo(
+    () =>
+      allPins.map((pin) => ({
+        coordinates: { latitude: pin.latitude, longitude: pin.longitude },
+        id: pin.id,
+        title: pin.pokemonName,
+      })),
+    [allPins]
   );
 
   return (
@@ -100,25 +85,16 @@ export default function MapLayout() {
       {Platform.OS === "android" ? (
         <GoogleMaps.View
           style={{ flex: 1 }}
-          onMapClick={(ev) => {
-            // console.log(ev);
-            // the type of this is wrong, at runtime the event's got a different structure.
-            openAddMenu(ev as Coordinates);
-          }}
-          onMarkerClick={(marker) => {
-            detailsSheetRef.current?.present();
-            setChosenPinId(marker.id);
-          }}
-          markers={allPins.map((pin) => ({
-            coordinates: { latitude: pin.latitude, longitude: pin.longitude },
-            id: pin.id,
-            title: pin.pokemonName,
-          }))}
+          onMapClick={(ev) => openAddMenu(ev as Coordinates)}
+          onMarkerClick={markerChosen}
+          markers={mapMarkers}
         />
       ) : Platform.OS === "ios" ? (
         <AppleMaps.View
           style={{ flex: 1 }}
           onMapClick={(ev) => openAddMenu(ev as Coordinates)}
+          onMarkerClick={markerChosen}
+          markers={mapMarkers}
         />
       ) : (
         <Text className="text-center">{`The map view is not supported on this platform`}</Text>
@@ -126,15 +102,11 @@ export default function MapLayout() {
       <BottomSheetModal ref={listSheetRef} backdropComponent={renderBackdrop}>
         <BottomSheetView>
           <Text className="mb-5 text-2xl font-bold text-center">{`Choose a pokemon`}</Text>
-          <TextInput
-            className="m-2 p-3 border rounded-xl border-gray-200 bg-gray-50 text-black focus:border-gray-400"
-            placeholder="Search"
-            placeholderTextColor={colors.gray[500]}
-            autoFocus={true}
-            onChangeText={onSearchChange}
-            selectTextOnFocus={true}
+          <PokeList
+            names={pokeNames.data || []}
+            enableSearch={true}
+            onPokeOpen={addPin}
           />
-          <PokeList names={pokeNamesToShow} onPokeOpen={addPin} />
         </BottomSheetView>
       </BottomSheetModal>
       <BottomSheetModal
