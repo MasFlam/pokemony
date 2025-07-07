@@ -1,7 +1,7 @@
 import { useGetPokemonNamesQuery } from "@/api/pokeApi";
 import { FavoritePoke } from "@/components/FavoritePoke";
 import { PokeDetails } from "@/components/PokeDetails";
-import { PokeListItem } from "@/components/PokeListItem";
+import PokeList from "@/components/PokeList";
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
 import { updateFavPokeName } from "@/state/slices/favPokeSlice";
 import {
@@ -10,7 +10,7 @@ import {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { useCallback, useRef, useState } from "react";
-import { FlatList, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 export default function PokeListLayout() {
   const pokeNames = useGetPokemonNamesQuery();
@@ -53,24 +53,10 @@ export default function PokeListLayout() {
             : `Found ${pokeNames.data?.length} pokemons`}
         </Text>
       </View>
-      <FlatList
-        data={pokeNames.data || []}
-        renderItem={({ item }) => (
-          <PokeListItem
-            pokemonName={item}
-            onOpen={() => openDetails(item)}
-            onLikeToggle={() => {
-              if (favPokeName === item) {
-                dispatch(updateFavPokeName(undefined));
-              } else {
-                dispatch(updateFavPokeName(item));
-              }
-            }}
-            liked={favPokeName === item}
-          />
-        )}
-        keyExtractor={(item) => item}
-        refreshing={pokeNames.isLoading}
+      <PokeList
+        names={pokeNames.data || []}
+        showLikes={true}
+        onPokeOpen={openDetails}
       />
       <View className="mb-20">
         <Text className="text-center text-xl font-bold">{`That's it folks!`}</Text>
