@@ -1,5 +1,6 @@
 import { pokeApi } from "@/api/pokeApi";
 import favPokeReducer from "@/state/slices/favPokeSlice";
+import pokePinsReducer from "@/state/slices/pokePinsSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
@@ -28,6 +29,7 @@ export const store = configureStore({
     combineReducers({
       [pokeApi.reducerPath]: pokeApi.reducer,
       favPoke: favPokeReducer,
+      pokePins: pokePinsReducer,
     })
   ),
   middleware: (getDefaultMiddleware) =>

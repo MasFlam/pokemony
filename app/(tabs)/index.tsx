@@ -9,8 +9,10 @@ import {
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { useCallback, useRef, useState } from "react";
-import { Text, View } from "react-native";
+import Fuse from "fuse.js";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { Text, TextInput, View } from "react-native";
+import colors from "tailwindcss/colors";
 
 export default function PokeListLayout() {
   const pokeNames = useGetPokemonNamesQuery();
@@ -18,12 +20,34 @@ export default function PokeListLayout() {
   const [openName, setOpenName] = useState<string | undefined>();
   const dispatch = useAppDispatch();
   const favPokeName = useAppSelector((state) => state.favPoke.name);
+  const [searchResults, setSearchResults] = useState<string[] | undefined>();
+
+  const fuse = useMemo(() => {
+    if (pokeNames.data === undefined) {
+      return undefined;
+    } else {
+      return new Fuse(pokeNames.data, {
+        threshold: 0.3,
+      });
+    }
+  }, [pokeNames]);
 
   const openDetails = (name: string) => {
     console.log(`Tapped on pokemon ${name}`);
     setOpenName(name);
     bottomSheetRef.current?.present();
   };
+
+  const onSearchChange = (text: string) => {
+    if (fuse === undefined || text.length < 3) {
+      setSearchResults(undefined);
+    } else {
+      setSearchResults(fuse.search(text).map((result) => result.item));
+    }
+  };
+
+  const pokeNamesToShow =
+    searchResults !== undefined ? searchResults : pokeNames.data || [];
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -45,16 +69,25 @@ export default function PokeListLayout() {
           onRemove={() => dispatch(updateFavPokeName(undefined))}
         />
       )}
-      <View className="px-5 py-2 flex-row justify-between">
+      <View className="p-3 pb-2">
+        <TextInput
+          className="p-3 border rounded-xl border-gray-200 bg-gray-50 text-black focus:border-gray-400"
+          placeholderTextColor={colors.gray[500]}
+          placeholder="Search"
+          onChangeText={onSearchChange}
+          selectTextOnFocus={true}
+        />
+      </View>
+      <View className="px-5 pb-2 flex-row justify-between">
         <Text className="font-bold dark:text-red-500">{`Pokedex`}</Text>
         <Text>
           {pokeNames.isLoading
             ? `Loading...`
-            : `Found ${pokeNames.data?.length} pokemons`}
+            : `Found ${pokeNamesToShow.length} pokemons`}
         </Text>
       </View>
       <PokeList
-        names={pokeNames.data || []}
+        names={pokeNamesToShow}
         showLikes={true}
         onPokeOpen={openDetails}
       />

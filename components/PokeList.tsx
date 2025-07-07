@@ -4,7 +4,7 @@ import { FlatList } from "react-native";
 import { PokeListItem } from "./PokeListItem";
 
 export interface PokeListProps {
-  names?: string[];
+  names: string[];
   showLikes?: boolean;
   onPokeOpen?: (name: string) => void;
 }
