@@ -1,9 +1,11 @@
 import { useGetPokemonNamesQuery } from "@/api/pokeApi";
 import { PokeDetails } from "@/components/PokeDetails";
 import PokeList from "@/components/PokeList";
+import { TextButton } from "@/components/ui/Button";
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
 import {
   PokePin,
+  removePokePin,
   selectAllPokePins,
   selectPinById,
   updatePokePin,
@@ -62,7 +64,13 @@ export default function MapLayout() {
       longitude: chosenCoords.longitude,
     };
     dispatch(updatePokePin(pin));
-    listSheetRef.current?.close();
+    listSheetRef.current?.dismiss();
+  };
+
+  const chosenPinRemove = () => {
+    dispatch(removePokePin(chosenPinId!));
+    setChosenPinId(undefined);
+    detailsSheetRef.current?.dismiss();
   };
 
   const onSearchChange = (text: string) => {
@@ -132,8 +140,14 @@ export default function MapLayout() {
       <BottomSheetModal
         ref={detailsSheetRef}
         backdropComponent={renderBackdrop}
+        onDismiss={() => setChosenPinId(undefined)}
       >
         <BottomSheetView>
+          <TextButton
+            className="m-5 mb-0"
+            filled={false}
+            onPress={chosenPinRemove}
+          >{`Remove pin`}</TextButton>
           {chosenPin && <PokeDetails pokemonName={chosenPin.pokemonName} />}
         </BottomSheetView>
       </BottomSheetModal>
