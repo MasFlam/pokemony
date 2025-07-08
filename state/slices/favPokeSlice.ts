@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 
 export interface FavPokeState {
   name: string | undefined;
@@ -18,6 +19,9 @@ const favPokeSlice = createSlice({
     },
   },
 });
+
+export const isFavPoke = (state: RootState, name: string) =>
+  name === state.favPoke.name;
 
 export default favPokeSlice.reducer;
 export const { updateFavPokeName } = favPokeSlice.actions;

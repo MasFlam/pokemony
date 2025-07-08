@@ -1,8 +1,8 @@
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
-import { updateFavPokeName } from "@/state/slices/favPokeSlice";
+import { isFavPoke, updateFavPokeName } from "@/state/slices/favPokeSlice";
 import Fuse from "fuse.js";
-import { useState } from "react";
-import { FlatList, Text, TextInput, View } from "react-native";
+import { useCallback, useState } from "react";
+import { FlatList, ListRenderItem, Text, TextInput, View } from "react-native";
 import colors from "tailwindcss/colors";
 import { PokeListItem } from "./PokeListItem";
 
@@ -19,8 +19,6 @@ export default function PokeList({
   enableSearch = false,
   onPokeOpen = () => {},
 }: PokeListProps) {
-  const dispatch = useAppDispatch();
-  const favPokeName = useAppSelector((state) => state.favPoke.name);
   const [searchResults, setSearchResults] = useState<string[] | undefined>();
 
   const fuse = enableSearch
@@ -39,6 +37,13 @@ export default function PokeList({
 
   const pokeNamesToShow = searchResults !== undefined ? searchResults : names;
 
+  const renderItem: ListRenderItem<string> = useCallback(
+    ({ item: name }) => (
+      <Item name={name} onPokeOpen={onPokeOpen} showLikes={showLikes} />
+    ),
+    [onPokeOpen, showLikes]
+  );
+
   return (
     <View>
       {enableSearch && (
@@ -53,28 +58,44 @@ export default function PokeList({
         </View>
       )}
       <View className="px-5 py-2 flex-row justify-between">
-        <Text className="font-bold dark:text-white">{`Pokedex`}</Text>
-        <Text className="dark:text-white">{`Found ${pokeNamesToShow.length} pokemons`}</Text>
+        <Text className="font-bold dark:text-white">Pokedex</Text>
+        <Text className="dark:text-white">
+          Found {pokeNamesToShow.length} pokemons
+        </Text>
       </View>
       <FlatList
+        windowSize={2 * 3 + 1}
         data={pokeNamesToShow}
-        renderItem={({ item: name }) => (
-          <PokeListItem
-            pokemonName={name}
-            onOpen={() => onPokeOpen(name)}
-            onLikeToggle={() => {
-              if (favPokeName === name) {
-                dispatch(updateFavPokeName(undefined));
-              } else {
-                dispatch(updateFavPokeName(name));
-              }
-            }}
-            showLike={showLikes}
-            liked={favPokeName === name}
-          />
-        )}
+        renderItem={renderItem}
         keyExtractor={(name) => name}
       />
     </View>
+  );
+}
+
+interface ItemProps {
+  name: string;
+  showLikes: boolean;
+  onPokeOpen: (name: string) => void;
+}
+
+function Item({ name, showLikes, onPokeOpen }: ItemProps) {
+  const liked = useAppSelector((state) => isFavPoke(state, name));
+  const dispatch = useAppDispatch();
+
+  return (
+    <PokeListItem
+      pokemonName={name}
+      onOpen={() => onPokeOpen(name)}
+      onLikeToggle={() => {
+        if (liked) {
+          dispatch(updateFavPokeName(undefined));
+        } else {
+          dispatch(updateFavPokeName(name));
+        }
+      }}
+      showLike={showLikes}
+      liked={liked}
+    />
   );
 }

@@ -118,7 +118,9 @@ export default function MapLayout() {
           markers={mapMarkers}
         />
       ) : (
-        <Text className="text-center">{`The map view is not supported on this platform`}</Text>
+        <Text className="text-center">
+          The map view is not supported on this platform
+        </Text>
       )}
       <BottomSheetModal
         ref={listSheetRef}
@@ -127,7 +129,9 @@ export default function MapLayout() {
         handleIndicatorStyle={modalHandleStyle}
       >
         <BottomSheetView>
-          <Text className="mb-5 text-2xl font-bold text-center dark:text-white">{`Choose a pokemon`}</Text>
+          <Text className="mb-5 text-2xl font-bold text-center dark:text-white">
+            Choose a pokemon
+          </Text>
           <PokeList
             names={pokeNames.data || []}
             enableSearch={true}
@@ -147,7 +151,9 @@ export default function MapLayout() {
             className="m-5 mb-0"
             filled={false}
             onPress={chosenPinRemove}
-          >{`Remove pin`}</TextButton>
+          >
+            Remove pin
+          </TextButton>
           {chosenPin && <PokeDetails pokemonName={chosenPin.pokemonName} />}
         </BottomSheetView>
       </BottomSheetModal>

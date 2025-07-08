@@ -40,7 +40,9 @@ export function PokeListItem({
           <Text className="text-xl font-bold capitalize dark:text-white">
             {pokemon.data?.name || "..."}
           </Text>
-          <Text className="text-gray-500 dark:text-zinc-400">{`#${pokemon.data?.id || "..."}`}</Text>
+          <Text className="text-gray-500 dark:text-zinc-400">
+            #{pokemon.data?.id || "..."}
+          </Text>
         </View>
       </View>
       {showLike && (

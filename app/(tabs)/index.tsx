@@ -2,7 +2,7 @@ import { useGetPokemonNamesQuery } from "@/api/pokeApi";
 import { FavoritePoke } from "@/components/FavoritePoke";
 import { PokeDetails } from "@/components/PokeDetails";
 import PokeList from "@/components/PokeList";
-import { useAppDispatch, useAppSelector } from "@/state/hooks";
+import { useAppDispatch } from "@/state/hooks";
 import { updateFavPokeName } from "@/state/slices/favPokeSlice";
 import {
   BottomSheetBackdrop,
@@ -10,7 +10,7 @@ import {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { useColorScheme } from "nativewind";
-import { useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import { View, ViewStyle } from "react-native";
 import colors from "tailwindcss/colors";
 
@@ -18,15 +18,12 @@ export default function PokeListLayout() {
   const { colorScheme } = useColorScheme();
   const pokeNames = useGetPokemonNamesQuery();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const [openName, setOpenName] = useState<string | undefined>();
   const dispatch = useAppDispatch();
-  const favPokeName = useAppSelector((state) => state.favPoke.name);
 
-  const openDetails = (name: string) => {
+  const openDetails = useCallback((name: string) => {
     console.log(`Tapped on pokemon ${name}`);
-    setOpenName(name);
-    bottomSheetRef.current?.present();
-  };
+    bottomSheetRef.current?.present(name);
+  }, []);
 
   const renderBackdrop = (props: any) => (
     <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
@@ -52,13 +49,10 @@ export default function PokeListLayout() {
 
   return (
     <View className="bg-white dark:bg-black">
-      {favPokeName && (
-        <FavoritePoke
-          pokemonName={favPokeName}
-          onOpenDetails={() => openDetails(favPokeName)}
-          onRemove={() => dispatch(updateFavPokeName(undefined))}
-        />
-      )}
+      <FavoritePoke
+        onOpenDetails={(favPokeName) => openDetails(favPokeName)}
+        onRemove={() => dispatch(updateFavPokeName(undefined))}
+      />
       <PokeList
         names={pokeNames.data || []}
         showLikes={true}
@@ -67,14 +61,20 @@ export default function PokeListLayout() {
       />
       <BottomSheetModal
         ref={bottomSheetRef}
-        onDismiss={() => setOpenName(undefined)}
         backdropComponent={renderBackdrop}
         backgroundStyle={modalStyle}
         handleIndicatorStyle={modalHandleStyle}
       >
-        <BottomSheetView>
-          {openName && <PokeDetails pokemonName={openName} />}
-        </BottomSheetView>
+        {(openName) => {
+          console.log(openName);
+          return (
+            <BottomSheetView>
+              {openName && (
+                <PokeDetails pokemonName={openName.data as string} />
+              )}
+            </BottomSheetView>
+          );
+        }}
       </BottomSheetModal>
     </View>
   );
