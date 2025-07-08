@@ -11,15 +11,15 @@ export function PokeDetails({ pokemonName }: PokeDetailsProps) {
 
   const statRow = (name: string, value: number) => (
     <View className="w-full flex-row justify-between">
-      <Text className="text-xl">{name}</Text>
-      <Text className="text-xl">{`${value}`}</Text>
+      <Text className="text-xl dark:text-white">{name}</Text>
+      <Text className="text-xl dark:text-white">{`${value}`}</Text>
     </View>
   );
 
   return (
     <View className="p-10">
       <View className="flex-col items-center gap-5">
-        <Text className="text-4xl font-bold capitalize">
+        <Text className="text-4xl font-bold capitalize dark:text-white">
           {pokemon.data?.name || "..."}
         </Text>
         <Image

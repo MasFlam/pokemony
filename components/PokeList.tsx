@@ -44,7 +44,7 @@ export default function PokeList({
       {enableSearch && (
         <View className="p-2 pb-0">
           <TextInput
-            className="p-3 text-lg border rounded-xl border-gray-200 bg-gray-50 text-black focus:border-gray-400"
+            className="p-3 text-lg border rounded-xl border-gray-200 bg-gray-50 text-black focus:border-gray-400 dark:bg-zinc-900 dark:border-zinc-700 dark:focus:border-zinc-500 dark:text-white"
             placeholderTextColor={colors.gray[500]}
             placeholder="Search"
             onChangeText={onSearchChange}
@@ -53,8 +53,8 @@ export default function PokeList({
         </View>
       )}
       <View className="px-5 py-2 flex-row justify-between">
-        <Text className="font-bold">{`Pokedex`}</Text>
-        <Text>{`Found ${pokeNamesToShow.length} pokemons`}</Text>
+        <Text className="font-bold dark:text-white">{`Pokedex`}</Text>
+        <Text className="dark:text-white">{`Found ${pokeNamesToShow.length} pokemons`}</Text>
       </View>
       <FlatList
         data={pokeNamesToShow}

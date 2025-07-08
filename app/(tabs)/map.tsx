@@ -19,10 +19,13 @@ import * as Crypto from "expo-crypto";
 import { AppleMaps, Coordinates, GoogleMaps } from "expo-maps";
 import { AppleMapsMarker } from "expo-maps/build/apple/AppleMaps.types";
 import { GoogleMapsMarker } from "expo-maps/build/google/GoogleMaps.types";
+import { useColorScheme } from "nativewind";
 import { useMemo, useRef, useState } from "react";
-import { Platform, Text, View } from "react-native";
+import { Platform, Text, View, ViewStyle } from "react-native";
+import colors from "tailwindcss/colors";
 
 export default function MapLayout() {
+  const { colorScheme } = useColorScheme();
   const pokeNames = useGetPokemonNamesQuery();
   const allPins = useAppSelector(selectAllPokePins);
   const dispatch = useAppDispatch();
@@ -80,8 +83,26 @@ export default function MapLayout() {
     [allPins]
   );
 
+  const modalStyle: ViewStyle =
+    colorScheme === "light"
+      ? {
+          backgroundColor: colors.white,
+        }
+      : {
+          backgroundColor: colors.black,
+        };
+
+  const modalHandleStyle: ViewStyle =
+    colorScheme === "light"
+      ? {
+          backgroundColor: colors.black,
+        }
+      : {
+          backgroundColor: colors.white,
+        };
+
   return (
-    <View className="flex-1">
+    <View className="dark:bg-black flex-1">
       {Platform.OS === "android" ? (
         <GoogleMaps.View
           style={{ flex: 1 }}
@@ -99,9 +120,14 @@ export default function MapLayout() {
       ) : (
         <Text className="text-center">{`The map view is not supported on this platform`}</Text>
       )}
-      <BottomSheetModal ref={listSheetRef} backdropComponent={renderBackdrop}>
+      <BottomSheetModal
+        ref={listSheetRef}
+        backdropComponent={renderBackdrop}
+        backgroundStyle={modalStyle}
+        handleIndicatorStyle={modalHandleStyle}
+      >
         <BottomSheetView>
-          <Text className="mb-5 text-2xl font-bold text-center">{`Choose a pokemon`}</Text>
+          <Text className="mb-5 text-2xl font-bold text-center dark:text-white">{`Choose a pokemon`}</Text>
           <PokeList
             names={pokeNames.data || []}
             enableSearch={true}
@@ -113,6 +139,8 @@ export default function MapLayout() {
         ref={detailsSheetRef}
         backdropComponent={renderBackdrop}
         onDismiss={() => setChosenPinId(undefined)}
+        backgroundStyle={modalStyle}
+        handleIndicatorStyle={modalHandleStyle}
       >
         <BottomSheetView>
           <TextButton

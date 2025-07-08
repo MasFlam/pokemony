@@ -54,8 +54,8 @@ export default function CameraLayout() {
 
   if (!hasPermission) {
     return (
-      <View className="h-full p-5 flex-col justify-center">
-        <Text className="text-center text-xl font-bold">{`Permission needed to use the camera.`}</Text>
+      <View className="h-full p-5 flex-col justify-center dark:bg-black">
+        <Text className="text-center text-xl font-bold dark:text-white">{`Permission needed to use the camera.`}</Text>
         <TextButton
           className="mt-5"
           onPress={onGrantPress}
@@ -66,14 +66,14 @@ export default function CameraLayout() {
 
   if (cameraDevice === undefined) {
     return (
-      <View className="h-full p-5 flex-col justify-center">
-        <Text className="text-center text-xl font-bold">{`No camera found`}</Text>
+      <View className="h-full p-5 flex-col justify-center dark:bg-black">
+        <Text className="text-center text-xl font-bold dark:text-white">{`No camera found`}</Text>
       </View>
     );
   }
 
   return (
-    <View style={StyleSheet.absoluteFill}>
+    <View className="dark:bg-black" style={StyleSheet.absoluteFill}>
       <Camera
         style={StyleSheet.absoluteFill}
         device={cameraDevice}

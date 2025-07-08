@@ -9,10 +9,13 @@ import {
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
+import { useColorScheme } from "nativewind";
 import { useRef, useState } from "react";
-import { Text, View } from "react-native";
+import { View, ViewStyle } from "react-native";
+import colors from "tailwindcss/colors";
 
 export default function PokeListLayout() {
+  const { colorScheme } = useColorScheme();
   const pokeNames = useGetPokemonNamesQuery();
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const [openName, setOpenName] = useState<string | undefined>();
@@ -29,8 +32,26 @@ export default function PokeListLayout() {
     <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />
   );
 
+  const modalStyle: ViewStyle =
+    colorScheme === "light"
+      ? {
+          backgroundColor: colors.white,
+        }
+      : {
+          backgroundColor: colors.black,
+        };
+
+  const modalHandleStyle: ViewStyle =
+    colorScheme === "light"
+      ? {
+          backgroundColor: colors.black,
+        }
+      : {
+          backgroundColor: colors.white,
+        };
+
   return (
-    <View>
+    <View className="bg-white dark:bg-black">
       {favPokeName && (
         <FavoritePoke
           pokemonName={favPokeName}
@@ -44,13 +65,12 @@ export default function PokeListLayout() {
         enableSearch={true}
         onPokeOpen={openDetails}
       />
-      <View className="mb-20">
-        <Text className="text-center text-xl font-bold">{`That's it folks!`}</Text>
-      </View>
       <BottomSheetModal
         ref={bottomSheetRef}
         onDismiss={() => setOpenName(undefined)}
         backdropComponent={renderBackdrop}
+        backgroundStyle={modalStyle}
+        handleIndicatorStyle={modalHandleStyle}
       >
         <BottomSheetView>
           {openName && <PokeDetails pokemonName={openName} />}

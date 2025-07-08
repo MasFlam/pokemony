@@ -1,22 +1,40 @@
+import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
 import { Tabs } from "expo-router";
+import { useColorScheme } from "nativewind";
 import * as Outline from "react-native-heroicons/outline";
 import * as Solid from "react-native-heroicons/solid";
 import colors from "tailwindcss/colors";
 
 export default function TabsLayout() {
+  const { colorScheme } = useColorScheme();
+
+  const screenOptions: BottomTabNavigationOptions =
+    colorScheme === "light"
+      ? {
+          tabBarActiveTintColor: colors.gray[700],
+          tabBarInactiveTintColor: colors.gray[400],
+          headerTintColor: colors.black,
+          tabBarStyle: {
+            backgroundColor: colors.white,
+          },
+          headerStyle: {
+            backgroundColor: colors.white,
+          },
+        }
+      : {
+          tabBarActiveTintColor: colors.gray[200],
+          tabBarInactiveTintColor: colors.gray[400],
+          headerTintColor: colors.white,
+          tabBarStyle: {
+            backgroundColor: colors.black,
+          },
+          headerStyle: {
+            backgroundColor: colors.black,
+          },
+        };
+
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: colors.gray["700"],
-        // headerRight: () => (
-        //   <View className="p-5">
-        //     <Link href="/settings">
-        //       <Outline.Cog6ToothIcon size={28} />
-        //     </Link>
-        //   </View>
-        // ),
-      }}
-    >
+    <Tabs screenOptions={screenOptions}>
       <Tabs.Screen
         name="index"
         options={{
