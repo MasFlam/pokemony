@@ -11,7 +11,7 @@ import {
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { AppleMaps, Coordinates, GoogleMaps } from "expo-maps";
+import { AppleMaps, CameraPosition, Coordinates, GoogleMaps } from "expo-maps";
 import { AppleMapsMarker } from "expo-maps/build/apple/AppleMaps.types";
 import { GoogleMapsMarker } from "expo-maps/build/google/GoogleMaps.types";
 import { useRouter } from "expo-router";
@@ -27,6 +27,7 @@ export default function MapLayout() {
   const dispatch = useAppDispatch();
   const [chosenPinId, setChosenPinId] = useState<string | undefined>();
   const detailsSheetRef = useRef<BottomSheetModal>(null);
+  const cameraPos = useRef<CameraPosition>({});
 
   const chosenPin = useAppSelector((state) =>
     selectPinById(state, chosenPinId)
@@ -45,6 +46,21 @@ export default function MapLayout() {
     dispatch(removePokePin(chosenPinId!));
     setChosenPinId(undefined);
     detailsSheetRef.current?.dismiss();
+  };
+
+  const cameraMoved = ({
+    coordinates,
+    zoom,
+  }: {
+    coordinates: Coordinates;
+    zoom: number;
+    tilt: number;
+    bearing: number;
+  }) => {
+    cameraPos.current = {
+      coordinates,
+      zoom,
+    };
   };
 
   const renderBackdrop = (props: any) => (
@@ -84,15 +100,19 @@ export default function MapLayout() {
       {Platform.OS === "android" ? (
         <GoogleMaps.View
           style={{ flex: 1 }}
+          cameraPosition={cameraPos.current}
           onMapClick={(ev) => openAddMenu(ev as Coordinates)}
           onMarkerClick={markerChosen}
+          onCameraMove={cameraMoved}
           markers={mapMarkers}
         />
       ) : Platform.OS === "ios" ? (
         <AppleMaps.View
           style={{ flex: 1 }}
+          cameraPosition={cameraPos.current}
           onMapClick={(ev) => openAddMenu(ev as Coordinates)}
           onMarkerClick={markerChosen}
+          onCameraMove={cameraMoved}
           markers={mapMarkers}
         />
       ) : (
