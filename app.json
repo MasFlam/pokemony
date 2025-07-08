@@ -23,7 +23,7 @@
       "bundler": "metro",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyCz4Q8Vg6Z5Az079UM-g0Hbkf6FGpj7QYQ"
+          "apiKey": ""
         }
       },
       "edgeToEdgeEnabled": true,
