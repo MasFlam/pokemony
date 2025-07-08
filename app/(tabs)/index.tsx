@@ -48,7 +48,7 @@ export default function PokeListLayout() {
         };
 
   return (
-    <View className="bg-white dark:bg-black">
+    <View className="h-full bg-white dark:bg-black">
       <FavoritePoke
         onOpenDetails={(favPokeName) => openDetails(favPokeName)}
         onRemove={() => dispatch(updateFavPokeName(undefined))}
