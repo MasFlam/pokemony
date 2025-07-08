@@ -26,6 +26,16 @@ export function PokeDetails({ pokemonName }: PokeDetailsProps) {
           style={{ width: 200, height: 200 }}
           source={pokemon.data?.imageUrl}
         />
+        <View className="flex-row gap-2">
+          {pokemon.data?.types.map((tname) => (
+            <Text
+              key={tname}
+              className="text-sm text-zinc-200 px-3 py-1 rounded-full border border-gray-500"
+            >
+              {tname.toUpperCase()}
+            </Text>
+          ))}
+        </View>
         <View className="flex-col gap-2">
           {statRow("HP", pokemon.data?.stats.hp || 0)}
           {statRow("Speed", pokemon.data?.stats.speed || 0)}

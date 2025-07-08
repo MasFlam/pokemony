@@ -7,7 +7,7 @@ export const pokeApi = createApi({
   endpoints: (build) => ({
     getPokemonByName: build.query<Pokemon, string>({
       query: (name) => ({ url: `pokemon/${name}` }),
-      transformResponse: ({ id, name, sprites, stats }) => {
+      transformResponse: ({ id, name, sprites, stats, types }) => {
         const pokeStats: any = {};
         for (const stat of stats) {
           pokeStats[stat.stat.name] = stat.base_stat;
@@ -17,6 +17,7 @@ export const pokeApi = createApi({
           name: name,
           imageUrl: sprites.other.home.front_default,
           stats: pokeStats,
+          types: types.map((t: any) => t.type.name),
         };
       },
     }),

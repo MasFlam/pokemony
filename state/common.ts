@@ -3,4 +3,5 @@ export interface Pokemon {
   name: string;
   imageUrl: string;
   stats: Record<string, number>;
+  types: string[];
 }
