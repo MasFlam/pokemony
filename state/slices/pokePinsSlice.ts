@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
 export interface PokePin {
@@ -29,8 +29,10 @@ const pokePinsSlice = createSlice({
   },
 });
 
-export const selectAllPokePins = (state: RootState): PokePin[] =>
-  Object.values(state.pokePins.pinsById);
+export const selectAllPokePins = createSelector(
+  (state: RootState): Record<string, PokePin> => state.pokePins.pinsById,
+  (pinsById: Record<string, PokePin>) => Object.values(pinsById)
+);
 
 export const selectPinById = (
   state: RootState,

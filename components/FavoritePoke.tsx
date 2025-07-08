@@ -22,7 +22,7 @@ export function FavoritePoke({
   return (
     <View className="p-5 bg-gray-50 dark:bg-zinc-900 border-b border-gray-300 dark:border-zinc-700">
       <View className="flex-row items-center gap-5">
-        <View className="p-1 border border-gray-300 dark:border-gray-400 rounded-xl">
+        <View className="p-1 border border-gray-300 dark:border-zinc-600 rounded-xl">
           <Image
             source={pokemon.data?.imageUrl}
             style={{
