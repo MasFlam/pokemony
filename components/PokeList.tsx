@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
 import { isFavPoke, updateFavPokeName } from "@/state/slices/favPokeSlice";
+import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import Fuse from "fuse.js";
 import { useCallback, useState } from "react";
 import { FlatList, ListRenderItem, Text, TextInput, View } from "react-native";
@@ -8,6 +9,7 @@ import { PokeListItem } from "./PokeListItem";
 
 export interface PokeListProps {
   names: string[];
+  isInsideBottomSheet?: boolean;
   showLikes?: boolean;
   enableSearch?: boolean;
   onPokeOpen?: (name: string) => void;
@@ -15,6 +17,7 @@ export interface PokeListProps {
 
 export default function PokeList({
   names,
+  isInsideBottomSheet = false,
   showLikes = false,
   enableSearch = false,
   onPokeOpen = () => {},
@@ -63,12 +66,21 @@ export default function PokeList({
           Found {pokeNamesToShow.length} pokemons
         </Text>
       </View>
-      <FlatList
-        windowSize={2 * 3 + 1}
-        data={pokeNamesToShow}
-        renderItem={renderItem}
-        keyExtractor={(name) => name}
-      />
+      {isInsideBottomSheet ? (
+        <BottomSheetFlatList
+          windowSize={2 * 3 + 1}
+          data={pokeNamesToShow}
+          renderItem={renderItem}
+          keyExtractor={(name) => name}
+        />
+      ) : (
+        <FlatList
+          windowSize={2 * 3 + 1}
+          data={pokeNamesToShow}
+          renderItem={renderItem}
+          keyExtractor={(name) => name}
+        />
+      )}
     </View>
   );
 }
