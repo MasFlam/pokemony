@@ -1,5 +1,7 @@
 import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
-import { Tabs } from "expo-router";
+import { useAssets } from "expo-asset";
+import { Image } from "expo-image";
+import { Link, Tabs } from "expo-router";
 import { useColorScheme } from "nativewind";
 import * as Outline from "react-native-heroicons/outline";
 import * as Solid from "react-native-heroicons/solid";
@@ -7,6 +9,17 @@ import colors from "tailwindcss/colors";
 
 export default function TabsLayout() {
   const { colorScheme } = useColorScheme();
+  const [assets] = useAssets([require("@/assets/images/Pokemon-Logo.png")]);
+
+  const headerLogoFn = () => (
+    <Link href="/">
+      <Image
+        source={assets![0]}
+        style={{ width: 100, height: 40 }}
+        className="mr-4"
+      />
+    </Link>
+  );
 
   const screenOptions: BottomTabNavigationOptions =
     colorScheme === "light"
@@ -20,6 +33,7 @@ export default function TabsLayout() {
           headerStyle: {
             backgroundColor: colors.white,
           },
+          headerRight: headerLogoFn,
         }
       : {
           tabBarActiveTintColor: colors.gray[200],
@@ -31,6 +45,7 @@ export default function TabsLayout() {
           headerStyle: {
             backgroundColor: colors.black,
           },
+          headerRight: headerLogoFn,
         };
 
   return (

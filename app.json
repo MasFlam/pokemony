@@ -68,7 +68,13 @@
           }
         }
       ],
-      "expo-maps"
+      "expo-maps",
+      [
+        "expo-asset",
+        {
+          "assets": ["assets/images/Pokemon-Logo.png"]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
