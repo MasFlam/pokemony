@@ -1,5 +1,5 @@
 import { PokeDetails } from "@/components/PokeDetails";
-import { TextButton } from "@/components/ui/Button";
+import { TextButton } from "@/components/ui/TextButton";
 import { useAppDispatch, useAppSelector } from "@/state/hooks";
 import {
   removePokePin,

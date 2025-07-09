@@ -1,5 +1,5 @@
 import { PokeImage } from "@/components/PokeImage";
-import { TextButton } from "@/components/ui/Button";
+import { TextButton } from "@/components/ui/TextButton";
 import { useAppSelector } from "@/state/hooks";
 import { PlatformPressable } from "@react-navigation/elements";
 import { useColorScheme } from "nativewind";

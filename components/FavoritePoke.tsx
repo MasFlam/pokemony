@@ -3,7 +3,7 @@ import { useAppSelector } from "@/state/hooks";
 import { Image } from "expo-image";
 import { cssInterop } from "nativewind";
 import { Text, View } from "react-native";
-import { TextButton } from "./ui/Button";
+import { TextButton } from "./ui/TextButton";
 
 cssInterop(Image, { className: "style" });
 
